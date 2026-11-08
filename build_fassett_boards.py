@@ -1,0 +1,686 @@
+import os
+
+proj_dir = "/Users/frank/Work/13_money/02_开发/fassett-farm-vinyl"
+
+html = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fassett Farm Nursery — Plotter-Ready Vinyl Decal Vector System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #E8ECE9;
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #14221A;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+    }
+    .web-nav {
+      width: 1600px;
+      background: #132A1F;
+      color: #F4EFE6;
+      padding: 16px 28px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(224,159,62,0.35);
+    }
+    .web-nav h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      color: #F4EFE6;
+    }
+    .web-nav .btn-dl {
+      background: #E09F3E;
+      color: #132A1F;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      letter-spacing: 0.03em;
+    }
+    .board {
+      width: 1600px;
+      height: 1000px;
+      background: #F7F5F0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    }
+    .top-bar {
+      height: 54px;
+      background: #132A1F;
+      color: #F4EFE6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 3px solid #E09F3E;
+      flex-shrink: 0;
+    }
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .badge-gold {
+      background: #E09F3E;
+      color: #132A1F;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .top-title {
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      color: #FFFFFF;
+    }
+    .top-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #D4DFD8;
+      letter-spacing: 0.04em;
+    }
+    .board-body {
+      flex: 1;
+      padding: 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 0;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 18px;
+      height: 515px;
+    }
+    .card {
+      background: #FFFFFF;
+      border-radius: 12px;
+      border: 1px solid #DCD8CE;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-head {
+      height: 38px;
+      padding: 0 16px;
+      background: #EFECE4;
+      border-bottom: 1px solid #DCD8CE;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #1B4332;
+      flex-shrink: 0;
+    }
+    .card-head span.tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      background: #1B4332;
+      color: #F4EFE6;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .two-color-split {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 0;
+    }
+    .panel-dark {
+      background: #132A1F;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-right: 1px solid #DCD8CE;
+    }
+    .panel-light {
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+    .panel-dark img, .panel-light img {
+      width: 375px;
+      height: 375px;
+      object-fit: contain;
+    }
+    .swatch-strip {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.14);
+      color: #F4EFE6;
+    }
+    .panel-light .swatch-strip {
+      border-top: 1px solid #E5E2D9;
+      color: #14221A;
+    }
+    .swatches {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+    }
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 4px;
+      border: 1px solid rgba(0,0,0,0.2);
+    }
+    .mockup-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #0F1E16;
+    }
+    .mockup-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .mockup-overlay {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(19, 42, 31, 0.90);
+      backdrop-filter: blur(6px);
+      color: #F4EFE6;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(224,159,62,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+    }
+    .mockup-overlay strong {
+      color: #E09F3E;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .bottom-grid-4 {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      min-height: 0;
+    }
+    .mini-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      min-height: 0;
+    }
+    .mini-body.dark-bg {
+      background: #141816;
+      color: #FFFFFF;
+    }
+    .mini-body img {
+      height: 245px;
+      width: 245px;
+      object-fit: contain;
+    }
+    .mini-foot {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #4A5550;
+      border-top: 1px solid #EAE6DD;
+      padding-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .mini-body.dark-bg .mini-foot {
+      color: #C8D0CC;
+      border-top: 1px solid rgba(255,255,255,0.14);
+    }
+    .reg-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+      color: #1B4332;
+    }
+    .foot-bar {
+      height: 40px;
+      background: #132A1F;
+      color: #D4DFD8;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      flex-shrink: 0;
+    }
+    .foot-bar strong { color: #E09F3E; }
+
+    /* Board 02 layout */
+    .b2-top-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      height: 525px;
+    }
+    .compare-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+      background: #FFFFFF;
+      min-height: 0;
+    }
+    .compare-box img {
+      width: 390px;
+      height: 390px;
+      object-fit: contain;
+    }
+    .audit-note {
+      width: 100%;
+      background: #F4F1EA;
+      border-left: 3px solid #1B4332;
+      padding: 8px 12px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #1E2D24;
+    }
+    .audit-note.warn {
+      background: #FEF2F2;
+      border-left-color: #DC2626;
+      color: #7F1D1D;
+    }
+    .b2-bottom-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      min-height: 0;
+    }
+    .spec-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 14px 18px;
+      background: #FFFFFF;
+    }
+    .spec-item {
+      background: #F7F5F0;
+      border: 1px solid #E2DEC9;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+    .spec-item h4 {
+      font-size: 12.5px;
+      color: #1B4332;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .spec-item h4 span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: #B46509;
+    }
+    .spec-item p {
+      font-size: 11.5px;
+      color: #425249;
+      line-height: 1.4;
+    }
+    .serif-opt-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 18px;
+      background: #FFFFFF;
+    }
+    .serif-opt-body img {
+      width: 240px;
+      height: 240px;
+      object-fit: contain;
+      border: 1px solid #EAE6DD;
+      border-radius: 8px;
+      padding: 6px;
+    }
+    .serif-opt-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .serif-opt-info h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      color: #132A1F;
+    }
+    .serif-opt-info p {
+      font-size: 12px;
+      line-height: 1.45;
+      color: #3B4A41;
+    }
+    .format-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .fmt-pill {
+      background: #132A1F;
+      color: #E09F3E;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="web-nav">
+    <div>
+      <h1>Fassett Farm Nursery · Plotter-Ready Vinyl Decal Vector System (.AI / .EPS / .SVG)</h1>
+    </div>
+    <a class="btn-dl" href="Fassett_Farm_Nursery_Vinyl_Vector_Pack.zip" download>Download Complete Vector Pack (.ZIP)</a>
+  </nav>
+
+  <!-- BOARD 01: 2-COLOR SPOT SEPARATIONS, VEHICLE PANEL MOCKUP & 1-COLOR KNOCKOUTS -->
+  <section class="board" id="board-01">
+    <header class="top-bar">
+      <div class="top-left">
+        <span class="badge-gold">SHEET 01 / 02 · PLOTTER PRODUCTION</span>
+        <span class="top-title">FASSETT FARM NURSERY — SIMPLIFIED VINYL DECAL VECTOR, 2-COLOUR SPOT SEPARATION &amp; VEHICLE MOCKUP</span>
+      </div>
+      <div class="top-right">100% VECTOR (.AI · .EPS · .SVG) · MERGED OVERLAPS · EASY-WEED PLOTTER PATHS</div>
+    </header>
+
+    <div class="board-body">
+      <div class="hero-grid">
+        <!-- Left: 2-Color Spot Palettes for Dark & Light Vehicle Bodywork -->
+        <div class="card">
+          <div class="card-head">
+            <span>01 · Two-Colour Spot Vinyl Editions (Dark &amp; Light Vehicle Bodywork)</span>
+            <span class="tag">2 SEPARATED SPOT LAYERS</span>
+          </div>
+          <div class="two-color-split">
+            <div class="panel-dark">
+              <img src="exports/04_Fassett_Farm_2Color_Dark_Bodywork.png" alt="2-Color Dark Vehicle Bodywork" />
+              <div class="swatch-strip">
+                <strong>Dark Bodywork Palette</strong>
+                <div class="swatches">
+                  <span><i class="dot" style="background:#F4EFE6"></i>Cream #F4EFE6</span>
+                  <span><i class="dot" style="background:#E09F3E"></i>Gold #E09F3E</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel-light">
+              <img src="exports/03_Fassett_Farm_2Color_Light_Bodywork.png" alt="2-Color Light Vehicle Bodywork" />
+              <div class="swatch-strip">
+                <strong>White / Silver Bodywork</strong>
+                <div class="swatches">
+                  <span><i class="dot" style="background:#1B4332"></i>Forest #1B4332</span>
+                  <span><i class="dot" style="background:#C87D20"></i>Amber #C87D20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Vehicle Door Panel Mockup -->
+        <div class="card">
+          <div class="card-head">
+            <span>02 · Outdoor Vehicle Door Panel Preview (18" × 18" Decal Scale)</span>
+            <span class="tag">HIGH-CONTRAST BODYWORK POP</span>
+          </div>
+          <div class="mockup-wrap">
+            <img src="assets/truck_mockup.jpg" alt="Fassett Farm Nursery Pickup Truck Door Vinyl Decal" />
+            <div class="mockup-overlay">
+              <div><strong>Plotter-Verified Proportions:</strong> Bold 2.2mm+ minimum cut strokes hold up outdoors &amp; through washes</div>
+              <div><strong>2-Layer Vinyl:</strong> Oracal 651-023 + 020</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Separated Layer Plates + 1-Color Single-Pass Knock-Outs -->
+      <div class="bottom-grid-4">
+        <div class="card">
+          <div class="card-head">
+            <span>03A · Spot Layer 1 (Base Plate)</span>
+            <span class="tag">ROLL 01 CUT</span>
+          </div>
+          <div class="mini-body">
+            <img src="exports/05_Spot_Layer_1_Base_Structure.png" alt="Spot Layer 1 Plate" />
+            <div class="mini-foot">
+              <span class="reg-mark">⊕ Reg. Marks Included</span>
+              <span>Type + Ring + Monadnock</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>03B · Spot Layer 2 (Botanical)</span>
+            <span class="tag">ROLL 02 CUT</span>
+          </div>
+          <div class="mini-body">
+            <img src="exports/06_Spot_Layer_2_Botanical_Accent.png" alt="Spot Layer 2 Plate" />
+            <div class="mini-foot">
+              <span class="reg-mark" style="color:#C87D20">⊕ Zero Overlap Slivers</span>
+              <span>Echinacea + Yarrow + Tree</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>04A · 1-Colour Knock-Out (Positive)</span>
+            <span class="tag">SINGLE-PASS CUT</span>
+          </div>
+          <div class="mini-body">
+            <img src="exports/01_Fassett_Farm_1Color_Positive_Black.png" alt="1-Color Positive Black" />
+            <div class="mini-foot">
+              <span>1-Layer Matte Black Vinyl</span>
+              <span>For White/Silver Trucks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>04B · 1-Colour Knock-Out (Reversed)</span>
+            <span class="tag">SINGLE-PASS CUT</span>
+          </div>
+          <div class="mini-body dark-bg">
+            <img src="exports/02_Fassett_Farm_1Color_Knockout_White_Transparent.png" alt="1-Color Reversed White" />
+            <div class="mini-foot">
+              <span>1-Layer White Die-Cut Vinyl</span>
+              <span>For Dark Doors &amp; Rear Glass</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="foot-bar">
+      <div><strong>Deliverables Ready for Immediate Handover:</strong> Editable .AI + .EPS + .SVG (with Outlined &amp; Flattened Plotter Copies)</div>
+      <div><strong>Live Vector Inspection &amp; Direct Download:</strong> frank20190926.github.io/fassett-farm-vinyl/</div>
+    </footer>
+  </section>
+
+  <!-- BOARD 02: BEFORE/AFTER SIMPLIFICATION AUDIT, CAD WIREFRAME (CTRL+Y) & ORIGINAL SERIF EDITION -->
+  <section class="board" id="board-02">
+    <header class="top-bar">
+      <div class="top-left">
+        <span class="badge-gold">SHEET 02 / 02 · VECTOR ENGINEERING</span>
+        <span class="top-title">BEFORE vs. AFTER PLOTTER SIMPLIFICATION, BÉZIER WIREFRAME (CTRL+Y) &amp; BONUS ORIGINAL-SERIF EDITION</span>
+      </div>
+      <div class="top-right">MINIMAL ANCHOR POINTS · ZERO SELF-INTERSECTIONS · WEED-READY GEOMETRY</div>
+    </header>
+
+    <div class="board-body">
+      <div class="b2-top-grid">
+        <div class="card">
+          <div class="card-head">
+            <span>A · Original Screen Logo (Before)</span>
+            <span class="tag" style="background:#991B1B">UN-CUTTABLE HAIRLINES</span>
+          </div>
+          <div class="compare-box">
+            <img src="assets/FassettFarmNursery_BW-jpeg.jpg" alt="Original Logo Before" />
+            <div class="audit-note warn">
+              <strong>Why Plotters Tear Here:</strong> 263 tiny floating meadow ticks (&lt;0.5mm) + 410 microscopic enclosed pinholes in the Yarrow &amp; Tree foliage snag the blade during weeding.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>B · Simplified Plotter Master (After)</span>
+            <span class="tag">SMOOTH CUTTING &amp; WEEDING</span>
+          </div>
+          <div class="compare-box">
+            <img src="exports/01_Fassett_Farm_1Color_Positive_Black.png" alt="Simplified Plotter Vector After" />
+            <div class="audit-note">
+              <strong>How We Solved It:</strong> Thickened all paths to ≥2.2mm uniform weight, simplified Yarrow florets into bold 5-petal clusters, consolidated tree foliage, and removed all floating specks.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>C · Illustrator Outline Mode (Ctrl+Y)</span>
+            <span class="tag">MERGED COMPOUND PATHS</span>
+          </div>
+          <div class="compare-box">
+            <img src="exports/05_Fassett_Farm_CAD_Plotter_Wireframe.svg" alt="CAD Wireframe Outline Mode" />
+            <div class="audit-note">
+              <strong>Clean Vector Topology:</strong> Blue = Spot Layer 1 (404 nodes) · Amber = Spot Layer 2 (970 nodes). All overlaps merged via Pathfinder Unite — zero double-cut lines at cut time.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="b2-bottom-grid">
+        <div class="card">
+          <div class="card-head">
+            <span>Plotter &amp; Vinyl Production Engineering Checklist</span>
+            <span class="tag">SIGN-SHOP VERIFIED</span>
+          </div>
+          <div class="spec-grid">
+            <div class="spec-item">
+              <h4>1. Path Thickening &amp; Minimum Gauge <span>≥ 2.2 MM STROKE</span></h4>
+              <p>Every mountain ridge, petal division, fern leaflet, and serif bracket is thickened to hold up cleanly on Graphtec, Roland, and Mimaki vinyl plotters.</p>
+            </div>
+            <div class="spec-item">
+              <h4>2. Zero Weeding Traps <span>410 PINHOLES REMOVED</span></h4>
+              <p>Eliminated all sub-millimeter enclosed islands in the Yarrow umbels and central tree crown while preserving 100% of the recognizable New England nursery scene.</p>
+            </div>
+            <div class="spec-item">
+              <h4>3. Merged Overlaps (No Double Cuts) <span>PATHFINDER UNITE</span></h4>
+              <p>All intersecting strokes where the Coneflowers and Yarrow cross the double ring are welded into clean compound paths so the blade never cuts across an active shape.</p>
+            </div>
+            <div class="spec-item">
+              <h4>4. Clean 2-Layer Separation <span>SPOT LAYER 1 + LAYER 2</span></h4>
+              <p>Separates into two distinct spot-colour layers (Base Structure + Botanical Flora) plus 1-colour positive and knock-out files for single-pass cutting.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span>Bonus Included: Original Thin-Bracket Serif Edition</span>
+            <span class="tag">BOTH VERSIONS IN .ZIP</span>
+          </div>
+          <div class="serif-opt-body">
+            <img src="exports/07_Fassett_Farm_Faithful_Original_Serif_BW.png" alt="Faithful Original Serif Edition" />
+            <div class="serif-opt-info">
+              <h3>Both Typography Weights Included</h3>
+              <p>In addition to the <strong>Bold Slab-Serif Vehicle Edition</strong> (optimized for long-distance highway legibility), the master vector pack also includes this <strong>Exact Original Serif Edition</strong> keeping your original thinner-bracketed letterforms with thickened botanical paths.</p>
+              <div class="format-badges">
+                <span class="fmt-pill">.AI (Illustrator)</span>
+                <span class="fmt-pill">.EPS (Plotter)</span>
+                <span class="fmt-pill">.SVG (Cut-Ready)</span>
+                <span class="fmt-pill">.PDF (Vector)</span>
+                <span class="fmt-pill">.PNG (4K Transp.)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="foot-bar">
+      <div><strong>Included in Handover Pack:</strong> Native Editable Layers + Outlined &amp; Flattened Plotter Copies (.AI, .EPS, .SVG, .PDF, .PNG)</div>
+      <div><strong>Interactive Preview &amp; Vector Download:</strong> frank20190926.github.io/fassett-farm-vinyl/</div>
+    </footer>
+  </section>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    if (mode === 'b1') {
+      document.querySelector('.web-nav').style.display = 'none';
+      document.getElementById('board-02').style.display = 'none';
+      document.body.style.padding = '0';
+      document.body.style.background = '#F7F5F0';
+      document.getElementById('board-01').style.boxShadow = 'none';
+    } else if (mode === 'b2') {
+      document.querySelector('.web-nav').style.display = 'none';
+      document.getElementById('board-01').style.display = 'none';
+      document.body.style.padding = '0';
+      document.body.style.background = '#F7F5F0';
+      document.getElementById('board-02').style.boxShadow = 'none';
+    }
+  </script>
+</body>
+</html>'''
+
+with open(f"{proj_dir}/index.html", "w") as f:
+    f.write(html)
+print("Wrote", f"{proj_dir}/index.html")
